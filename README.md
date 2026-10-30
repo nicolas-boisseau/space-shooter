@@ -35,6 +35,15 @@ le dossier `dist` et les réglages de l'éditeur ne sont pas versionnés.
 - Flèches : déplacer le vaisseau
 - Espace (maintenir) : tirer automatiquement
 - Entrée : recommencer après une collision
+- Mobile : toucher la zone de jeu et glisser pour placer le vaisseau sous le
+  doigt (dans les limites de l'écran). Le tir démarre dès le premier contact,
+  puis conserve sa cadence tant que le doigt reste posé ; le relâcher arrête
+  le tir. Un seul doigt pilote le vaisseau, les contacts supplémentaires sont ignorés.
+- Après une défaite : toucher la zone de jeu pour recommencer une fois
+  l'explosion terminée. Un nouveau contact est nécessaire pour reprendre le pilotage.
+
+Le défilement tactile de la page est bloqué uniquement sur le canvas du jeu.
+Une interruption du contact ou la mise en arrière-plan libère le contrôle tactile.
 
 Les ennemis lâchent parfois des modules : multitir, cadence accélérée ou changement d'arme. Le tir peut évoluer des projectiles simples vers des missiles ou des lasers.
 

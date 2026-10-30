@@ -49,8 +49,8 @@ class ShooterScene extends Phaser.Scene {
     this.score = 0;
     this.elapsed = 0;
     this.spawnElapsed = 0;
-    this.fireElapsed = 0;
     this.fireDelay = 720;
+    this.fireElapsed = this.fireDelay;
     this.shotCount = 1;
     this.weaponType = 'bullet';
     this.gameOver = false;
@@ -59,6 +59,7 @@ class ShooterScene extends Phaser.Scene {
     this.bullets = [];
     this.powerups = [];
     this.playerBank = 0;
+    this.touchPointer = null;
 
     this.drawBackground();
     [
@@ -111,6 +112,28 @@ class ShooterScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.input.keyboard.addCapture('SPACE,UP,DOWN,LEFT,RIGHT');
     this.restartKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    this.input.on('pointerdown', (pointer) => {
+      if (!pointer.wasTouch) return;
+      if (this.gameOver) {
+        if (this.restartReady) this.scene.restart();
+        return;
+      }
+      if (!this.touchPointer) this.touchPointer = pointer;
+    });
+    const releaseTouch = (pointer) => {
+      if (pointer === this.touchPointer) this.touchPointer = null;
+    };
+    const clearTouch = () => { this.touchPointer = null; };
+    this.input.on('pointerup', releaseTouch);
+    this.input.on('pointerupoutside', releaseTouch);
+    this.input.on('gameout', clearTouch);
+    this.game.events.on(Phaser.Core.Events.BLUR, clearTouch);
+    this.game.events.on(Phaser.Core.Events.HIDDEN, clearTouch);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      clearTouch();
+      this.game.events.off(Phaser.Core.Events.BLUR, clearTouch);
+      this.game.events.off(Phaser.Core.Events.HIDDEN, clearTouch);
+    });
 
     this.scoreText = this.add.text(18, 18, 'SCORE  000000', {
       fontFamily: 'DM Mono, monospace', fontSize: '12px', color: '#dce8ff',
@@ -159,23 +182,31 @@ class ShooterScene extends Phaser.Scene {
   }
 
   movePlayer(delta) {
+    if (this.touchPointer && !this.touchPointer.isDown) this.touchPointer = null;
     let dx = Number(this.cursors.right.isDown) - Number(this.cursors.left.isDown);
     let dy = Number(this.cursors.down.isDown) - Number(this.cursors.up.isDown);
     if (dx !== 0 && dy !== 0) {
       dx *= Math.SQRT1_2;
       dy *= Math.SQRT1_2;
     }
-    const targetBank = Math.sign(dx);
+    const nextX = Phaser.Math.Clamp(
+      this.touchPointer ? this.touchPointer.x : this.player.x + dx * this.playerSpeed * delta / 1000,
+      24, GAME_WIDTH - 24
+    );
+    const nextY = Phaser.Math.Clamp(
+      this.touchPointer ? this.touchPointer.y : this.player.y + dy * this.playerSpeed * delta / 1000,
+      34, GAME_HEIGHT - 42
+    );
+    const targetBank = this.touchPointer ? Math.sign(nextX - this.player.x) : Math.sign(dx);
     this.playerBank += Phaser.Math.Clamp(targetBank - this.playerBank, -delta * 0.005, delta * 0.005);
     const bankFrame = Math.round(this.playerBank * 2) + 2;
     this.player.play(PLAYER_ANIMATIONS[bankFrame], true);
-    this.player.x = Phaser.Math.Clamp(this.player.x + dx * this.playerSpeed * delta / 1000, 24, GAME_WIDTH - 24);
-    this.player.y = Phaser.Math.Clamp(this.player.y + dy * this.playerSpeed * delta / 1000, 34, GAME_HEIGHT - 42);
+    this.player.setPosition(nextX, nextY);
   }
 
   updateShooting(delta) {
     this.fireElapsed += delta;
-    if (this.cursors.space.isDown && this.fireElapsed >= this.fireDelay) {
+    if ((this.cursors.space.isDown || this.touchPointer?.isDown) && this.fireElapsed >= this.fireDelay) {
       this.fireElapsed = 0;
       this.fire();
     }
@@ -350,6 +381,7 @@ class ShooterScene extends Phaser.Scene {
   endGame() {
     if (this.gameOver) return;
     this.gameOver = true;
+    this.touchPointer = null;
     this.player.anims.stop();
     for (const enemy of this.enemies) enemy.sprite.anims.stop();
     this.player.setVisible(false);
@@ -364,9 +396,9 @@ class ShooterScene extends Phaser.Scene {
       fontFamily: 'Space Grotesk, sans-serif', fontSize: '25px', color: '#f4f6ff',
       fontStyle: 'bold', letterSpacing: 1
     }).setOrigin(0.5).setDepth(9);
-    this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 17, `SCORE  ${String(this.score).padStart(6, '0')}   ·   ENTRÉE POUR REJOUER`, {
+    this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 17, `SCORE  ${String(this.score).padStart(6, '0')}\nENTRÉE OU TOUCHER POUR REJOUER`, {
       fontFamily: 'DM Mono, monospace', fontSize: '9px', color: '#9aa8c7',
-      letterSpacing: 1
+      letterSpacing: 1, align: 'center', lineSpacing: 10
     }).setOrigin(0.5).setDepth(9);
   }
 }
