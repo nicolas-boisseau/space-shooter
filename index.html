@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070b18" />
+    <meta
+      name="description"
+      content="Survolez Bordeaux dans un shoot'em up : esquivez, tirez et récupérez des bonus au-dessus de la Garonne."
+    />
+    <title>Starfall — Space shooter</title>
+  </head>
+  <body>
+    <main class="page">
+      <header class="topbar">
+        <a class="brand" href="%BASE_URL%" aria-label="Starfall, accueil">
+          <span class="brand-mark" aria-hidden="true">✦</span>
+          <span>STARFALL</span>
+        </a>
+        <span class="version">PROTO<span>TYPE</span> <b>V0.1</b></span>
+      </header>
+
+      <section class="game-layout" aria-label="Jeu Starfall">
+        <div class="game-column">
+          <div class="game-heading">
+            <p class="eyebrow">SECTEUR 01 <span>·</span> BORDEAUX · LA GARONNE</p>
+            <h1>À vos postes, pilote.</h1>
+          </div>
+          <div id="game-container" aria-label="Zone de jeu"></div>
+          <p class="game-caption"><span class="live-dot"></span> VOL EN COURS <span>—</span> SURVIVEZ AUSSI LONGTEMPS QUE POSSIBLE</p>
+        </div>
+
+        <aside class="guide">
+          <p class="eyebrow">BRIEFING DE MISSION</p>
+          <h2>Restez en mouvement.</h2>
+          <p class="guide-copy">Survolez la Garonne, du pont Simone-Veil au pont d'Aquitaine. Les hostiles arrivent par le haut : éliminez-les et récupérez leurs modules.</p>
+
+          <div class="guide-divider"></div>
+          <p class="section-label">COMMANDES</p>
+          <div class="control-row">
+            <div class="arrow-keys" aria-label="Flèches directionnelles">
+              <kbd class="up">↑</kbd>
+              <div><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div>
+            </div>
+            <span>Déplacer le vaisseau</span>
+          </div>
+          <div class="control-row">
+            <kbd class="space-key">ESPACE</kbd>
+            <span>Tir automatique<br /><small>Maintenir pour tirer</small></span>
+          </div>
+
+          <div class="guide-divider"></div>
+          <p class="section-label">MODULES À RÉCUPÉRER</p>
+          <div class="powerup-row"><span class="powerup-dot yellow"></span><span><b>Multitir</b><small>Un projectile supplémentaire</small></span></div>
+          <div class="powerup-row"><span class="powerup-dot violet"></span><span><b>Cadence</b><small>Tir plus rapide</small></span></div>
+          <div class="powerup-row"><span class="powerup-dot orange"></span><span><b>Arsenal</b><small>Change le type de tir</small></span></div>
+          <div class="guide-footer"><span class="ship-icon">▲</span> <span>Bon vol, pilote.</span></div>
+        </aside>
+      </section>
+
+      <footer class="footer"><span>STARFALL <b>·</b> PROTOTYPE JOUABLE</span><span>CAP AU NORD · AU-DESSUS DE BORDEAUX</span></footer>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
